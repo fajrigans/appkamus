@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kamus Inggris</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for select arrow - removed as selects are removed */
+        .animate-bounce {
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(-25%);
+                animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+            }
+            50% {
+                transform: translateY(0);
+                animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+            }
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 flex items-center justify-center p-4">
+
+    <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-2xl transform transition-all duration-300 hover:scale-105">
+        <h1 class="text-4xl font-extrabold text-center text-purple-700 mb-2 flex items-center justify-center gap-3">
+            <span class="text-5xl">📚</span> Kamus Inggris
+        </h1>
+        <p class="text-lg text-center text-gray-600 mb-8">by Fajr</p>
+
+        <div class="mb-6">
+            <label for="word-input" class="block text-gray-700 text-lg font-semibold mb-2">
+                Masukkan Kata:
+            </label>
+            <input
+                id="word-input"
+                type="text"
+                placeholder="Ketik kata Bahasa Inggris di sini..."
+                class="w-full p-4 border-2 border-purple-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-purple-200 text-lg transition-all duration-200"
+            />
+        </div>
+
+        <!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div>
+                <label for="source-lang" class="block text-gray-700 text-lg font-semibold mb-2">
+                    Dari Bahasa:
+                </label>
+                <select
+                    id="source-lang"
+                    class="w-full p-4 border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-200 text-lg bg-white pr-8 transition-all duration-200 cursor-pointer"
+                >
+                </select>
+            </div>
+            <div>
+                <label for="target-lang" class="block text-gray-700 text-lg font-semibold mb-2">
+                    Ke Bahasa:
+                </label>
+                <select
+                    id="target-lang"
+                    class="w-full p-4 border-2 border-green-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-200 text-lg bg-white pr-8 transition-all duration-200 cursor-pointer"
+                >
+                </select>
+            </div>
+        </div> -->
+
+        <button
+            id="translate-button"
+            class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 rounded-xl text-xl shadow-lg hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-4 focus:ring-purple-300 transform transition-all duration-300 hover:scale-100 active:scale-95 flex items-center justify-center gap-2"
+        >
+            <span class="text-3xl">✨</span> Cari Definisi!
+        </button>
+
+        <div id="error-message" class="mt-8 p-4 bg-red-100 border-2 border-red-400 text-red-700 rounded-xl text-center font-medium text-lg hidden items-center justify-center gap-2 animate-bounce">
+            <span class="text-2xl">⚠️</span> <span id="error-text"></span>
+        </div>
+
+        <div id="translation-result" class="mt-8 p-6 bg-blue-50 border-2 border-blue-300 rounded-2xl shadow-inner text-center hidden animate-fade-in">
+            <h3 class="text-2xl font-bold text-blue-700 mb-3">
+                Definisi untuk: <span id="original-word" class="text-purple-800"></span>
+            </h3>
+            <p class="text-lg text-gray-700 mb-2">
+                Pengucapan: <span id="pronunciation-text"></span>
+                <button
+                  id="play-audio-button"
+                  class="ml-2 p-1 bg-purple-200 rounded-full hover:bg-purple-300 transition-colors duration-200 hidden"
+                  title="Dengarkan Pengucapan"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-700" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.383 3.067A1 1 0 0110 3.5v13a1 1 0 01-1.617.764L4.043 12H2a1 1 0 01-1-1V9a1 1 0 011-1h2.043l4.34-4.764zM16.5 8a.5.5 0 00-1 0v4a.5.5 0 001 0V8zM18 7a.5.5 0 00-1 0v6a.5.5 0 001 0V7z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+            </p>
+            <div id="definitions-container">
+                </div>
+            <div class="mt-4 text-5xl">😊</div>
+        </div>
+
+        <div class="mt-10 p-6 bg-yellow-50 border-2 border-yellow-300 rounded-2xl shadow-inner">
+            <h3 class="text-2xl font-bold text-yellow-700 mb-4 text-center">
+                <span class="text-3xl">💡</span> Catatan Penting
+            </h3>
+            <p class="text-gray-700 text-lg">
+                Kamus ini menggunakan <code class="font-mono bg-yellow-200 px-1 rounded">dictionaryapi.dev</code>, sebuah API gratis yang menyediakan definisi, pengucapan, sinonim, dan contoh kalimat untuk kata-kata dalam **Bahasa Inggris**.
+            </p>
+            <p class="text-center text-gray-600 mt-4 text-sm">
+                Coba masukkan kata-kata Bahasa Inggris seperti "hello", "cat", "run", "beautiful" untuk melihat hasilnya!
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        // Daftar bahasa - hanya Inggris yang relevan sekarang
+        const languages = [
+            { code: 'en', name: 'English' },
+        ];
+
+        // Dapatkan elemen DOM
+        const wordInput = document.getElementById('word-input');
+        // const sourceLangSelect = document.getElementById('source-lang'); // Dihapus
+        // const targetLangSelect = document.getElementById('target-lang'); // Dihapus
+        const translateButton = document.getElementById('translate-button');
+        const errorMessageDiv = document.getElementById('error-message');
+        const errorTextSpan = document.getElementById('error-text');
+        const translationResultDiv = document.getElementById('translation-result');
+        const originalWordSpan = document.getElementById('original-word');
+        // const sourceLangNameSpan = document.getElementById('source-lang-name'); // Dihapus dari tampilan
+        const pronunciationTextSpan = document.getElementById('pronunciation-text');
+        const playAudioButton = document.getElementById('play-audio-button');
+        const definitionsContainer = document.getElementById('definitions-container');
+
+        let currentAudio = null; // Untuk mengelola instance audio
+
+        // Fungsi untuk menampilkan pesan error
+        function showErrorMessage(message) {
+            errorMessageDiv.classList.remove('hidden');
+            errorMessageDiv.classList.add('flex');
+            errorTextSpan.textContent = message;
+            translationResultDiv.classList.add('hidden');
+        }
+
+        // Fungsi untuk menyembunyikan pesan error
+        function hideErrorMessage() {
+            errorMessageDiv.classList.add('hidden');
+            errorMessageDiv.classList.remove('flex');
+        }
+
+        // Fungsi untuk menampilkan hasil terjemahan
+        function showTranslationResult(data) {
+            hideErrorMessage();
+            translationResultDiv.classList.remove('hidden');
+            originalWordSpan.textContent = data.originalWord;
+            // sourceLangNameSpan.textContent = data.sourceLangName; // Dihapus dari tampilan
+            pronunciationTextSpan.textContent = data.pronunciation;
+
+            // Clear previous definitions
+            definitionsContainer.innerHTML = '';
+
+            // Populate definitions
+            if (data.definitions && data.definitions.length > 0) {
+                data.definitions.forEach((meaning, index) => {
+                    const meaningDiv = document.createElement('div');
+                    meaningDiv.className = 'mb-4 text-left border-t border-blue-200 pt-4 mt-4';
+
+                    const partOfSpeechP = document.createElement('p');
+                    partOfSpeechP.className = 'text-xl font-semibold text-gray-800 mb-1 capitalize';
+                    partOfSpeechP.textContent = `(${meaning.partOfSpeech})`;
+                    meaningDiv.appendChild(partOfSpeechP);
+
+                    if (meaning.definitions && meaning.definitions.length > 0) {
+                        const defTitle = document.createElement('p');
+                        defTitle.className = 'text-lg font-medium text-gray-700 mt-2';
+                        defTitle.textContent = 'Definisi:';
+                        meaningDiv.appendChild(defTitle);
+
+                        const defList = document.createElement('ul');
+                        defList.className = 'list-disc list-inside text-gray-700 ml-4';
+                        meaning.definitions.forEach((def, defIndex) => {
+                            const listItem = document.createElement('li');
+                            listItem.className = 'mb-1';
+                            listItem.textContent = def;
+                            defList.appendChild(listItem);
+                        });
+                        meaningDiv.appendChild(defList);
+                    }
+
+                    if (meaning.examples && meaning.examples.length > 0) {
+                        const exampleTitle = document.createElement('p');
+                        exampleTitle.className = 'text-lg font-medium text-gray-700 mt-2';
+                        exampleTitle.textContent = 'Contoh:';
+                        meaningDiv.appendChild(exampleTitle);
+
+                        const exampleList = document.createElement('ul');
+                        exampleList.className = 'list-disc list-inside text-gray-500 italic ml-4';
+                        meaning.examples.forEach((ex, exIndex) => {
+                            const listItem = document.createElement('li');
+                            listItem.className = 'mb-1';
+                            listItem.textContent = `"${ex}"`;
+                            exampleList.appendChild(listItem);
+                        });
+                        meaningDiv.appendChild(exampleList);
+                    }
+
+                    if (meaning.synonyms && meaning.synonyms.length > 0) {
+                        const synonymsP = document.createElement('p');
+                        synonymsP.className = 'text-sm text-gray-600 mt-2';
+                        synonymsP.innerHTML = `<span class="font-semibold">Sinonim:</span> ${meaning.synonyms.join(', ')}`;
+                        meaningDiv.appendChild(synonymsP);
+                    }
+
+                    if (meaning.antonyms && meaning.antonyms.length > 0) {
+                        const antonymsP = document.createElement('p');
+                        antonymsP.className = 'text-sm text-gray-600';
+                        antonymsP.innerHTML = `<span class="font-semibold">Antonim:</span> ${meaning.antonyms.join(', ')}`;
+                        meaningDiv.appendChild(antonymsP);
+                    }
+
+                    definitionsContainer.appendChild(meaningDiv);
+                });
+            } else {
+                definitionsContainer.innerHTML = '<p class="text-lg text-gray-700">Tidak ada definisi yang ditemukan untuk kata ini.</p>';
+            }
+
+            // Handle audio button
+            if (data.audioUrl) {
+                playAudioButton.classList.remove('hidden');
+                playAudioButton.onclick = () => playAudio(data.audioUrl);
+            } else {
+                playAudioButton.classList.add('hidden');
+                playAudioButton.onclick = null; // Remove event listener
+            }
+        }
+
+        // Fungsi untuk memutar audio
+        function playAudio(url) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            if (url) {
+                currentAudio = new Audio(url);
+                currentAudio.play().catch(e => console.error("Error playing audio:", e));
+            }
+        }
+
+        // Fungsi utama untuk menangani terjemahan/pencarian
+        async function handleTranslate() {
+            hideErrorMessage();
+            translationResultDiv.classList.add('hidden');
+            translateButton.disabled = true;
+            translateButton.innerHTML = '<span class="text-3xl animate-spin">⏳</span> Mencari...';
+
+            const word = wordInput.value.toLowerCase().trim();
+            // const sourceLang = sourceLangSelect.value; // Dihapus
+            // const targetLang = targetLangSelect.value; // Dihapus
+
+            if (!word) {
+                showErrorMessage("Mohon masukkan kata untuk mencari definisi.");
+                translateButton.disabled = false;
+                translateButton.innerHTML = '<span class="text-3xl">✨</span> Cari Definisi!';
+                return;
+            }
+
+            try {
+                // Menggunakan dictionaryapi.dev. API ini paling baik untuk definisi bahasa Inggris.
+                // Selalu panggil API dengan bahasa Inggris
+                const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        showErrorMessage(`Kata '${word}' tidak ditemukan dalam kamus bahasa Inggris.`);
+                    } else {
+                        showErrorMessage(`Terjadi kesalahan saat mengambil data: ${response.statusText}`);
+                    }
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (Array.isArray(data) && data.length > 0) {
+                    const firstEntry = data[0];
+                    const meanings = firstEntry.meanings || [];
+                    const phonetics = firstEntry.phonetics || [];
+                    const phoneticText = phonetics.find(p => p.text)?.text || firstEntry.phonetic || 'Tidak tersedia';
+                    const audioUrl = phonetics.find(p => p.audio)?.audio;
+
+                    const processedData = {
+                        originalWord: firstEntry.word,
+                        // sourceLangName: languages.find(lang => lang.code === 'en')?.name, // Dihapus dari tampilan
+                        definitions: meanings.map(m => ({
+                            partOfSpeech: m.partOfSpeech,
+                            definitions: m.definitions.map(d => d.definition),
+                            examples: m.definitions.map(d => d.example).filter(Boolean),
+                            synonyms: m.synonyms || [],
+                            antonyms: m.antonyms || [],
+                        })),
+                        pronunciation: phoneticText,
+                        audioUrl: audioUrl,
+                    };
+                    showTranslationResult(processedData);
+                } else {
+                    showErrorMessage(`Kata '${word}' tidak ditemukan dalam kamus bahasa Inggris.`);
+                }
+            } catch (error) {
+                console.error("Fetch error:", error);
+                showErrorMessage("Gagal terhubung ke API. Periksa koneksi internet Anda atau coba lagi nanti.");
+            } finally {
+                translateButton.disabled = false;
+                translateButton.innerHTML = '<span class="text-3xl">✨</span> Cari Definisi!';
+            }
+        }
+
+        // Event Listeners
+        window.onload = () => {
+            // populateLanguageSelects(); // Dihapus
+        };
+        translateButton.addEventListener('click', handleTranslate);
+        wordInput.addEventListener('input', () => {
+            hideErrorMessage();
+            translationResultDiv.classList.add('hidden');
+        });
+        // sourceLangSelect.addEventListener('change', () => { // Dihapus
+        //     hideErrorMessage();
+        //     translationResultDiv.classList.add('hidden');
+        // });
+        // targetLangSelect.addEventListener('change', () => { // Dihapus
+        //     hideErrorMessage();
+        //     translationResultDiv.classList.add('hidden');
+        // });
+    </script>
+</body>
+</html>
