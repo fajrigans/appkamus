@@ -60,35 +60,22 @@
             />
         </div>
 
-        <!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div>
-                <label for="source-lang" class="block text-gray-700 text-lg font-semibold mb-2">
-                    Dari Bahasa:
-                </label>
-                <select
-                    id="source-lang"
-                    class="w-full p-4 border-2 border-blue-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-200 text-lg bg-white pr-8 transition-all duration-200 cursor-pointer"
-                >
-                </select>
-            </div>
-            <div>
-                <label for="target-lang" class="block text-gray-700 text-lg font-semibold mb-2">
-                    Ke Bahasa:
-                </label>
-                <select
-                    id="target-lang"
-                    class="w-full p-4 border-2 border-green-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-green-200 text-lg bg-white pr-8 transition-all duration-200 cursor-pointer"
-                >
-                </select>
-            </div>
-        </div> -->
-
         <button
             id="translate-button"
             class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 rounded-xl text-xl shadow-lg hover:from-purple-600 hover:to-pink-600 focus:outline-none focus:ring-4 focus:ring-purple-300 transform transition-all duration-300 hover:scale-100 active:scale-95 flex items-center justify-center gap-2"
         >
             <span class="text-3xl">✨</span> Cari Definisi!
         </button>
+
+        <div class="mt-4 flex justify-center">
+            <script type='text/javascript' src='https://edge-cdn.trakteer.id/js/trbtn-overlay.min.js?v=14-05-2025'></script>
+            <script type='text/javascript' class='troverlay'>
+                (function() {
+                    var trbtnId = trbtnOverlay.init('Dukung Saya di Trakteer','#be1e2d','https://trakteer.id/ahmadrizkyalfajri/tip/embed/modal','https://edge-cdn.trakteer.id/images/embed/trbtn-icon.png?v=14-05-2025','40','inline');
+                    trbtnOverlay.draw(trbtnId);
+                })();
+            </script>
+        </div>
 
         <div id="error-message" class="mt-8 p-4 bg-red-100 border-2 border-red-400 text-red-700 rounded-xl text-center font-medium text-lg hidden items-center justify-center gap-2 animate-bounce">
             <span class="text-2xl">⚠️</span> <span id="error-text"></span>
@@ -137,14 +124,11 @@
 
         // Dapatkan elemen DOM
         const wordInput = document.getElementById('word-input');
-        // const sourceLangSelect = document.getElementById('source-lang'); // Dihapus
-        // const targetLangSelect = document.getElementById('target-lang'); // Dihapus
         const translateButton = document.getElementById('translate-button');
         const errorMessageDiv = document.getElementById('error-message');
         const errorTextSpan = document.getElementById('error-text');
         const translationResultDiv = document.getElementById('translation-result');
         const originalWordSpan = document.getElementById('original-word');
-        // const sourceLangNameSpan = document.getElementById('source-lang-name'); // Dihapus dari tampilan
         const pronunciationTextSpan = document.getElementById('pronunciation-text');
         const playAudioButton = document.getElementById('play-audio-button');
         const definitionsContainer = document.getElementById('definitions-container');
@@ -170,7 +154,6 @@
             hideErrorMessage();
             translationResultDiv.classList.remove('hidden');
             originalWordSpan.textContent = data.originalWord;
-            // sourceLangNameSpan.textContent = data.sourceLangName; // Dihapus dari tampilan
             pronunciationTextSpan.textContent = data.pronunciation;
 
             // Clear previous definitions
@@ -271,8 +254,6 @@
             translateButton.innerHTML = '<span class="text-3xl animate-spin">⏳</span> Mencari...';
 
             const word = wordInput.value.toLowerCase().trim();
-            // const sourceLang = sourceLangSelect.value; // Dihapus
-            // const targetLang = targetLangSelect.value; // Dihapus
 
             if (!word) {
                 showErrorMessage("Mohon masukkan kata untuk mencari definisi.");
@@ -282,8 +263,6 @@
             }
 
             try {
-                // Menggunakan dictionaryapi.dev. API ini paling baik untuk definisi bahasa Inggris.
-                // Selalu panggil API dengan bahasa Inggris
                 const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
 
                 if (!response.ok) {
@@ -306,7 +285,6 @@
 
                     const processedData = {
                         originalWord: firstEntry.word,
-                        // sourceLangName: languages.find(lang => lang.code === 'en')?.name, // Dihapus dari tampilan
                         definitions: meanings.map(m => ({
                             partOfSpeech: m.partOfSpeech,
                             definitions: m.definitions.map(d => d.definition),
@@ -332,21 +310,12 @@
 
         // Event Listeners
         window.onload = () => {
-            // populateLanguageSelects(); // Dihapus
         };
         translateButton.addEventListener('click', handleTranslate);
         wordInput.addEventListener('input', () => {
             hideErrorMessage();
             translationResultDiv.classList.add('hidden');
         });
-        // sourceLangSelect.addEventListener('change', () => { // Dihapus
-        //     hideErrorMessage();
-        //     translationResultDiv.classList.add('hidden');
-        // });
-        // targetLangSelect.addEventListener('change', () => { // Dihapus
-        //     hideErrorMessage();
-        //     translationResultDiv.classList.add('hidden');
-        // });
     </script>
 </body>
 </html>
